@@ -1,0 +1,39 @@
+
+* {
+    padding: 0;
+    box-sizing: border-box;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+#cart-selection {
+    max-width: 500px;       
+    margin: 20px auto;      
+    padding: 15px;
+    border: 2px solid #333; 
+    border-radius: 30px;  
+    background-color: gray;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0; 
+    background-color: grey;
+}
+
+button{
+    background-color: white;
+    border-radius: 10px;
+    padding: 8px 15px;
+    border-color: black;
+    cursor: pointer;
+}
+
+#productoInd {
+      border: 2px solid #333; 
+    border-radius: 30px;  
+    background-color: gray;
+    padding: 8px 15px;
+    margin: 20px 0;
+}
+
+
