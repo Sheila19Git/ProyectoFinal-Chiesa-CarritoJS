@@ -95,80 +95,76 @@
 //         console.log(clientes[i] + " - " + turnos[i] + " tatuajes")
 //     }
 // }
+ // Mapeo de imágenes de los estilos
+const imagenesEstilos = {
+    "Minimalista": "../img/minis.png",
+    "Tradicional": "../img/tradicional.png",
+    "BlackandGrey": "../img/blackandgrey.png",
+    "Tribal": "../img/tribal.png"
+};
 
+// Archivo JSON
+fetch("../data/estilos.json")
+  .then((response) => response.json())
+  .then((data) => {
+    estilosTatuajes = data;
+    renderProductos(estilosTatuajes);
+  })
+  .catch((error) => {
+    console.error("Error al cargar los estilos:", error);
+  });
 
-const estilosTatuajes = [
-{
-    id: 1,
-    estilo: "minimalista",
-    precio: 20000
-},
-
-{
-    id: 2, 
-    estilo: "Tradicional",
-    precio: 40000
-
-},
-
-{
-    id: 3,
-    estilo: "blackandGrey",
-    precio: 35000
-},
-
-{
- id: 4,
- estilo: "Tribal",
- precio: 50000
-
-
-},
-
-
-
-]
-
-let cartProductos = JSON.parse(localStorage.getItem("cartProductos")) ||  []
-let productosContainer = document.getElementById("productos-container")
+let estilosTatuajes = [];
+let cartProductos = JSON.parse(localStorage.getItem("cartProductos")) || [];
+let productosContainer = document.getElementById("productos-container");
 
 function renderProductos(productosArray) {
-    for (const producto of productosArray) {
-        const card = document.createElement("div")
-        card.id = "productoInd"
-        card.innerHTML =  `<h3>${producto.estilo}</h3>
-                          <p>${producto.precio}</p>
-                          <button class="productoAgregar" id="${producto.id}">Agregar</button> `
-        productosContainer.appendChild(card)
+  productosContainer.innerHTML = "";
 
-    }
-    addToCardButton()
+  productosArray.forEach((producto) => {
+    const card = document.createElement("div");
+    card.id = "productoInd";
+
+    // Obtenemos la imagen correspondiente al estilo
+    const imagenProducto = imagenesEstilos[producto.estilo] || "../img/default.jpg";
+
+    card.innerHTML = `
+      <img src="${imagenProducto}" alt="${producto.estilo}" class="producto-img" />
+      <h3>${producto.estilo}</h3>
+      <p>Precio: $${producto.precio}</p>
+      <button class="productoAgregar" data-id="${producto.id}">Agregar</button>
+    `;
+    productosContainer.appendChild(card);
+  });
+
+  addToCartButton();
 }
 
-renderProductos(estilosTatuajes)
-
-function addToCardButton(){
-    addButton = document.querySelectorAll(".productoAgregar")
-    addButton.forEach(button => {
+function addToCartButton() {
+  const addButton = document.querySelectorAll(".productoAgregar");
+  addButton.forEach((button) => {
     button.onclick = (e) => {
-         const productId = Number(e.currentTarget.id)
-         const selectedProductOrig = estilosTatuajes.find(producto => producto.id == productId)
-         
-         if (!selectedProductOrig) return; 
-          const selectedProduct = { ...selectedProductOrig }
-          const productoExistente = cartProductos.find(p => p.id == selectedProduct.id)
+      const productId = Number(e.currentTarget.dataset.id);
+      const selectedProductOrig = estilosTatuajes.find(
+        (producto) => producto.id === productId
+      );
 
-          if (productoExistente) {
-             productoExistente.cantidad++
+      if (!selectedProductOrig) return;
 
-          } else{
-             selectedProduct.cantidad = 1;
-             cartProductos.push(selectedProduct)
+      const selectedProduct = { ...selectedProductOrig };
+      const productoExistente = cartProductos.find(
+        (p) => p.id === selectedProduct.id
+      );
 
-          }
+      if (productoExistente) {
+        productoExistente.cantidad++;
+      } else {
+        selectedProduct.cantidad = 1;
+        cartProductos.push(selectedProduct);
+      }
 
-          localStorage.setItem("cartProductos", JSON.stringify(cartProductos))
-    }
-    })
+      localStorage.setItem("cartProductos", JSON.stringify(cartProductos));
+    };
+  });
 }
-
+ 

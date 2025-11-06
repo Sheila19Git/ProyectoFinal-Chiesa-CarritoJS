@@ -1,0 +1,22 @@
+ [
+  {
+    "id": 1,
+    "estilo": "Minimalista",
+    "precio": 20000
+  },
+  {
+    "id": 2,
+    "estilo": "Tradicional",
+    "precio": 40000
+  },
+  {
+    "id": 3,
+    "estilo": "BlackandGrey",
+    "precio": 35000
+  },
+  {
+    "id": 4,
+    "estilo": "Tribal",
+    "precio": 50000
+  }
+]
