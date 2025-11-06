@@ -98,86 +98,74 @@
 
 // Img
 const imagenesEstilos = {
-    "Minimalista": "../img/minis.png",
-    "Tradicional": "../img/tradicional.png",
-    "BlackandGrey": "../img/blackandgrey.png",
-    "Tribal": "../img/tribal.png"
+  "Minimalista": "../img/minis.png",
+  "Tradicional": "../img/tradicional.png",
+  "BlackandGrey": "../img/blackandgrey.png",
+  "Tribal": "../img/tribal.png"
 };
-
-// Array 
-const estilosAPI = [
-    { id: 1, estilo: "Minimalista", precio: 20000, nombre: "Tatuaje Minimalista " },
-    { id: 2, estilo: "Tradicional", precio: 30000, nombre: "Tatuaje Tradicional " },
-    { id: 3, estilo: "BlackandGrey", precio: 40000, nombre: "Tatuaje Black & Grey " },
-    { id: 4, estilo: "Tribal", precio: 50000, nombre: "Tatuaje Tribal " }
-];
-
-function fetchEstilosSimulado() {
-    return new Promise((resolve) => {
-        setTimeout(() => resolve(estilosAPI), 300); 
-    });
-}
 
 
 let estilosTatuajes = [];
 let cartProductos = JSON.parse(localStorage.getItem("cartProductos")) || [];
 let productosContainer = document.getElementById("productos-container");
 
+//  Fetch JSON online
+fetch('https://mocki.io/v1/f41a035d-0ebe-4830-9025-56e5b9db1dec')
+  .then(response => response.json())
+  .then(data => {
+    estilosTatuajes = data;
+    renderProductos(estilosTatuajes);
+  })
+  .catch(err => console.error("Error al cargar los estilos:", err));
 
-fetchEstilosSimulado()
-    .then(data => {
-        estilosTatuajes = data;
-        renderProductos(estilosTatuajes);
-    })
-    .catch(err => console.error("Error al cargar los estilos:", err));
 
 function renderProductos(productosArray) {
-    productosContainer.innerHTML = "";
+  productosContainer.innerHTML = "";
 
-    productosArray.forEach((producto) => {
-        const card = document.createElement("div");
-        card.id = "productoInd";
+  productosArray.forEach((producto) => {
+    const card = document.createElement("div");
+    card.id = "productoInd";
 
-        const imagenProducto = imagenesEstilos[producto.estilo] || "../img/default.jpg";
+    const imagenProducto = imagenesEstilos[producto.estilo] || "../img/default.jpg";
 
-        card.innerHTML = `
-            <img src="${imagenProducto}" alt="${producto.nombre}" class="producto-img" />
-            <h3>${producto.nombre}</h3>
-            <p>Precio: $${producto.precio}</p>
-            <button class="productoAgregar" data-id="${producto.id}">Agregar</button>
-        `;
-        productosContainer.appendChild(card);
-    });
+    card.innerHTML = `
+      <img src="${imagenProducto}" alt="${producto.estilo}" class="producto-img" />
+      <h3>${producto.estilo}</h3>
+      <p>Precio: $${producto.precio}</p>
+      <button class="productoAgregar" data-id="${producto.id}">Agregar</button>
+    `;
+    productosContainer.appendChild(card);
+  });
 
-    addToCartButton();
+  addToCartButton();
 }
 
 // Botones
 function addToCartButton() {
-    const addButton = document.querySelectorAll(".productoAgregar");
-    addButton.forEach((button) => {
-        button.onclick = (e) => {
-            const productId = Number(e.currentTarget.dataset.id);
-            const selectedProductOrig = estilosTatuajes.find(
-                (producto) => producto.id === productId
-            );
+  const addButton = document.querySelectorAll(".productoAgregar");
+  addButton.forEach((button) => {
+    button.onclick = (e) => {
+      const productId = Number(e.currentTarget.dataset.id);
+      const selectedProductOrig = estilosTatuajes.find(
+        (producto) => producto.id === productId
+      );
 
-            if (!selectedProductOrig) return;
+      if (!selectedProductOrig) return;
 
-            const selectedProduct = { ...selectedProductOrig };
-            const productoExistente = cartProductos.find(
-                (p) => p.id === selectedProduct.id
-            );
+      const selectedProduct = { ...selectedProductOrig };
+      const productoExistente = cartProductos.find(
+        (p) => p.id === selectedProduct.id
+      );
 
-            if (productoExistente) {
-                productoExistente.cantidad++;
-            } else {
-                selectedProduct.cantidad = 1;
-                cartProductos.push(selectedProduct);
-            }
+      if (productoExistente) {
+        productoExistente.cantidad++;
+      } else {
+        selectedProduct.cantidad = 1;
+        cartProductos.push(selectedProduct);
+      }
 
-            localStorage.setItem("cartProductos", JSON.stringify(cartProductos));
-        };
-    });
+      localStorage.setItem("cartProductos", JSON.stringify(cartProductos));
+    };
+  });
 }
 
